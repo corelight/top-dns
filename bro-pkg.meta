@@ -1,0 +1,5 @@
+[package]
+description = Log the top DNS queries being requested.
+tags = dns, sumstats, log, measurement, top
+script_dir = scripts
+#test_command = ( cd tests && btest -d )
