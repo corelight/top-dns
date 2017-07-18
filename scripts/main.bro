@@ -24,7 +24,7 @@ export {
 	} &redef;
 
 	## The log ID.
-	redef enum Log::ID += { DNS_LOG };
+	redef enum Log::ID += { LOG };
 
 	type Info: record {
 		## Timestamp of when the data was finalized.
@@ -51,7 +51,7 @@ event bro_init() &priority=5
 	{
 	Log::create_stream(DNS_LOG, [$columns=Info, $path="top_dns"]);
 
-	local r1 = SumStats::Reducer($stream="top-dns-domain-trimmed", 
+	local r1 = SumStats::Reducer($stream="top-dns-name", 
 	                             $apply=set(SumStats::TOPK), 
 	                             $topk_size=top_k*10);
 	SumStats::create([$name="find-top-queries",
@@ -59,7 +59,7 @@ event bro_init() &priority=5
 	                  $reducers=set(r1),
 	                  $epoch_result(ts: time, key: SumStats::Key, result: SumStats::Result) =
 	                  	{
-	                  	local r = result["top-dns-domain-trimmed"];
+	                  	local r = result["top-dns-name"];
 	                  	local s: vector of SumStats::Observation;
 	                  	s = topk_get_top(r$topk, top_k);
 
@@ -77,12 +77,12 @@ event bro_init() &priority=5
 	                  			break;
 	                  		}
 
-	                  	Log::write(DNS_LOG, [$ts=ts, 
-	                  	                 $ts_delta=logging_interval, 
-	                  	                 $record_type=key$str,
-	                  	                 $top_queries=top_queries, 
-	                  	                 $top_counts=top_counts, 
-	                  	                 $top_epsilons=top_epsilons]);
+	                  	Log::write(TopDNS::LOG, [$ts=ts, 
+	                  	                         $ts_delta=logging_interval, 
+	                  	                         $record_type=key$str,
+	                  	                         $top_queries=top_queries, 
+	                  	                         $top_counts=top_counts, 
+	                  	                         $top_epsilons=top_epsilons]);
 	                  	}
 	                 ]);
 	}
@@ -94,6 +94,6 @@ event DNS::log_dns(rec: DNS::Info)
 	     ! Site::is_local_name(rec$query) )
 		{
 		local q = use_trimmed_domain ? DomainTLD::effective_domain(rec$query) : rec$query;
-		SumStats::observe("top-dns-domain-trimmed", [$str=rec$qtype_name], [$str=q]);
+		SumStats::observe("top-dns-name", [$str=rec$qtype_name], [$str=q]);
 		}
 	}
