@@ -40,16 +40,16 @@ export {
 		top_queries:  vector of string &log;
 
 		## The estimated counts of each of the top queries.
-		top_counts:   vector of string &log;
+		top_counts:   vector of count  &log;
 
 		## The estimated distance from the true value for each reported value.
-		top_epsilons: vector of string &log;
+		top_epsilons: vector of count  &log;
 	};
 }
 
 event bro_init() &priority=5
 	{
-	Log::create_stream(DNS_LOG, [$columns=Info, $path="top_dns"]);
+	Log::create_stream(TopDNS::LOG, [$columns=Info, $path="top_dns"]);
 
 	local r1 = SumStats::Reducer($stream="top-dns-name", 
 	                             $apply=set(SumStats::TOPK), 
@@ -80,7 +80,7 @@ event bro_init() &priority=5
 	                  	Log::write(TopDNS::LOG, [$ts=ts, 
 	                  	                         $ts_delta=logging_interval, 
 	                  	                         $record_type=key$str,
-	                  	                         $top_queries=top_queries, 
+	                  	                         $top_queries=top_queries,
 	                  	                         $top_counts=top_counts, 
 	                  	                         $top_epsilons=top_epsilons]);
 	                  	}
