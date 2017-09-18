@@ -19,7 +19,7 @@ Installation
 ::
 
 	bro-pkg refresh
-	bro-pkg install bro/sethhall/top-dns
+	bro-pkg install bro/corelight/top-dns
 
 Configuration
 -------------
