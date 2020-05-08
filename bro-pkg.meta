@@ -4,4 +4,4 @@ tags = dns, sumstats, log, measurement, top
 script_dir = scripts
 #test_command = ( cd tests && btest -d )
 depends = 
-    bro/sethhall/domain-tld *
+    zeek/sethhall/domain-tld *
