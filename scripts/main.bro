@@ -47,7 +47,11 @@ export {
 	};
 }
 
+@ifdef ( zeek_init )
+event zeek_init() &priority=5
+@else
 event bro_init() &priority=5
+@endif
 	{
 	Log::create_stream(TopDNS::LOG, [$columns=Info, $path="top_dns"]);
 
